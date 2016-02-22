@@ -1,11 +1,18 @@
-TARGET	= hex2hcd
-CFLAGS	= -O2 -march=native
-CC	= gcc
+CC = gcc
+CFLAGS = -O2 -march=native
+TARGET = hex2hcd
+PREFIX = /usr/local
 
-all:	$(TARGET)
 
-$(TARGET):	$(TARGET).c
+all: $(TARGET)
 
-clean:
-	-rm $(TARGET)
+$(TARGET): $(TARGET).c
 
+install: $(TARGET)
+	install -m 755 $(TARGET) $(PREFIX)/bin
+				 
+uninstall: 
+	rm -f $(PREFIX)/bin/$(TARGET)
+
+clean: 
+	rm -f $(TARGET)
