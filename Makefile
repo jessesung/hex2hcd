@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -O2 -march=native
+CFLAGS = -O2
 TARGET = hex2hcd
 PREFIX = /usr/local
 
@@ -10,9 +10,9 @@ $(TARGET): $(TARGET).c
 
 install: $(TARGET)
 	install -m 755 $(TARGET) $(PREFIX)/bin
-				 
-uninstall: 
+
+uninstall:
 	rm -f $(PREFIX)/bin/$(TARGET)
 
-clean: 
+clean:
 	rm -f $(TARGET)
