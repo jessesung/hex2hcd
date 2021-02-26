@@ -60,13 +60,13 @@ static int check_hex_line(const char *str, int len)
 
 static FILE *open_file(const char *fileName, const char *mode) 
 {
-    FILE *f = fopen(fileName, mode);
-    if (f == NULL) {
+    FILE *file = fopen(fileName, mode);
+    if (!file) {
         printf("The file '%s' could not be opened with the following reason\n", fileName);
-        printf("%s\n", strerror(errno));
+        puts(strerror(errno));
         exit(-EIO);
     }
-    return f;
+    return file;
 }
 
 int main(int argc, char *argv[])
@@ -97,15 +97,19 @@ int main(int argc, char *argv[])
     
 
     rbuf = NULL;
-    while ((len = getline(&rbuf, &buflen, ifp)) > 0) {
+    while (len = getline(&rbuf, &buflen, ifp)) {
         int type;
         char obuf[7];
         unsigned int dest_addr;
+
         while ((rbuf[len - 1] == '\r') || (rbuf[len - 1] == '\n')) len--;
+
         printf("%d, %s\n", (int)len, rbuf);
-        if (!check_hex_line(rbuf, len))
-            break;
+
+        if (!check_hex_line(rbuf, len)) break;
+
         type = hex_to_int(rbuf + 7);
+
         switch (type) {
             case 4:
                 addr = lhex_to_int(rbuf + 9) * 0x10000;
@@ -120,8 +124,9 @@ int main(int argc, char *argv[])
                 obuf[4] = dest_addr >> 8;
                 obuf[5] = dest_addr >> 16;
                 obuf[6] = dest_addr >> 24;
-                if (fwrite(obuf, 7, 1, ofp) != 1)
-                    goto output_err;
+
+                if (fwrite(obuf, 7, 1, ofp) != 1) goto output_err;
+
                 for (i = 0; i < hex_to_int(rbuf + 1); i++) {
                     obuf[0] = hex_to_int(rbuf + 9 + i * 2);
                     if (fwrite(obuf, 1, 1, ofp) != 1) goto output_err;
@@ -138,10 +143,10 @@ int main(int argc, char *argv[])
     puts("Hex file formatting error");
     return -EINVAL;
 
-output_err:
-    puts("Error on writing output file");
-    return -EIO;
+    output_err:
+        puts("Error on writing output file");
+        return -EIO;
 
-end: 
-    return 0;
+    end: 
+        return 0;
 }
