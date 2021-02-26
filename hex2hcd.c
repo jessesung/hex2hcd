@@ -91,11 +91,9 @@ int main(int argc, char *argv[])
             return 0;
     }
 
-
     ifp = open_file(ifn, "r");
     ofp = open_file(ofn, "w");
     
-
     rbuf = NULL;
     while (len = getline(&rbuf, &buflen, ifp)) {
         int type;
